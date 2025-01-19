@@ -14,27 +14,34 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { addTask } from "@/redux/features/task/taskSlice";
+import { editTask } from "@/redux/features/task/taskSlice";
 import { useAppDispatch } from "@/redux/hook";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Edit } from "lucide-react";
 import { useForm } from "react-hook-form"
 
-export function AddTaskModal() {
-
+export function EditTaskModal({task}) {
+//     const formattedDate = format(task?.dueDate, "MMMM do, yyyy");
+// console.log(formattedDate)
     const form = useForm();
     const dispatch = useAppDispatch();
 
     const onSubmit = (data) => {
-        const stringDate = String(data.dueDate)
-        data.dueDate = stringDate;
-        dispatch(addTask(data))
+        data.id = task.id
+        data.title = data.title || task.title;
+        data.description = data.description || task.description;
+        data.priority = data.priority || task.priority;
+        data.dueDate = data.dueDate ? String(data.dueDate) : task.dueDate;
+        // data = {...task, data}
+        console.log(data, task.dueDate)
+        dispatch(editTask(data))
     }
 
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button>Add Task</Button>
+                <Edit />
+                {/* <Button>Add Task</Button> */}
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogDescription className="sr-only">Fill up this form</DialogDescription>
@@ -50,7 +57,7 @@ export function AddTaskModal() {
                                 <FormItem>
                                     <FormLabel>Task Title</FormLabel>
                                     <FormControl>
-                                        <Input {...field} value={field.value || ''} />
+                                        <Input {...field} value={field.value || ''} placeholder={task?.title} />
                                     </FormControl>
                                     <FormDescription />
                                     <FormMessage />
@@ -65,7 +72,7 @@ export function AddTaskModal() {
                                 <FormItem>
                                     <FormLabel>Task Description</FormLabel>
                                     <FormControl>
-                                        <Input {...field} value={field.value || ''} />
+                                        <Input {...field} value={field.value || ''} placeholder={task?.description} />
                                     </FormControl>
                                     <FormDescription />
                                     <FormMessage />
@@ -79,10 +86,10 @@ export function AddTaskModal() {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Priority</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <Select onValueChange={field.onChange} defaultValue={task?.priority}>
                                         <FormControl>
                                             <SelectTrigger>
-                                                <SelectValue placeholder="Select a priority for task" />
+                                                <SelectValue placeholder="Select a priority for task"/>
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
@@ -111,6 +118,7 @@ export function AddTaskModal() {
                                                         "pl-3 text-left font-normal",
                                                         !field.value && "text-muted-foreground"
                                                     )}
+                                                    defaultValue={task?.dueDate}
                                                 >
                                                     {field.value ? (
                                                         format(field.value, "PPP")
