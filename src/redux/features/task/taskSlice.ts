@@ -68,7 +68,7 @@ const taskSlice = createSlice({
 });
 
 export const selectTasks = (state: RootState) => {
-    if (state.todo.filter === 'low') {        j
+    if (state.todo.filter === 'low') {        
         return state.todo.tasks.filter(task => task.priority === 'low')
     } else if (state.todo.filter === 'medium') {
         return state.todo.tasks.filter(task => task.priority === 'medium')
